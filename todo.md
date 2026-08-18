@@ -20,3 +20,9 @@
 - [x] Add automated tests for gateway request validation and authorization safeguards.
 - [x] Validate gateway behavior, TypeScript, and affected mobile screens.
 - [x] Add a deployable private-host gateway package with allowlisted health probes and approved-job handoff.
+- [x] Define dashboard summaries derived from locally stored dispatch records.
+- [x] Add a dashboard screen with local dispatch activity, module distribution, and workflow metrics.
+- [x] Enrich gateway health responses with per-module availability for dashboard visualization.
+- [x] Add periodic authorized stack-health refresh, manual refresh, and degraded-state feedback.
+- [x] Add tests for dispatch dashboard aggregation and stack-health response validation.
+- [x] Validate dashboard behavior, type checking, and mobile layout.

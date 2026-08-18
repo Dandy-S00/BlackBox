@@ -10,6 +10,11 @@ export const gatewayDispatchSchema = z.object({
   approvedAt: z.string().datetime(),
 });
 
+const gatewayHealthSchema = z.object({
+  status: z.enum(["Healthy", "Degraded"]),
+  modules: z.array(z.object({ id: moduleIdSchema, status: z.enum(["healthy", "unavailable", "manual"]) })).max(6),
+});
+
 export type GatewayDispatchInput = z.infer<typeof gatewayDispatchSchema>;
 type Fetcher = typeof fetch;
 type GatewayConfig = { baseUrl: string; token: string };
@@ -35,12 +40,14 @@ export class OperatorGateway {
   }
 
   async health() {
-    if (!this.config) return { configured: false as const, reachable: false, status: "Not configured" };
+    if (!this.config) return { configured: false as const, reachable: false, status: "Not configured", modules: [] as Array<{ id: z.infer<typeof moduleIdSchema>; status: "healthy" | "unavailable" | "manual" }> };
     try {
       const response = await this.fetcher(`${this.config.baseUrl}/v1/health`, { headers: this.requestHeaders(), signal: AbortSignal.timeout(8_000) });
-      return { configured: true as const, reachable: response.ok, status: response.ok ? "Healthy" : "Unavailable" };
+      const payload = gatewayHealthSchema.safeParse(await response.json().catch(() => null));
+      if (!payload.success) return { configured: true as const, reachable: false, status: "Unavailable", modules: [] as Array<{ id: z.infer<typeof moduleIdSchema>; status: "healthy" | "unavailable" | "manual" }> };
+      return { configured: true as const, reachable: true, status: payload.data.status, modules: payload.data.modules };
     } catch {
-      return { configured: true as const, reachable: false, status: "Unavailable" };
+      return { configured: true as const, reachable: false, status: "Unavailable", modules: [] as Array<{ id: z.infer<typeof moduleIdSchema>; status: "healthy" | "unavailable" | "manual" }> };
     }
   }
 
