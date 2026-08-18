@@ -1,0 +1,26 @@
+import { ReactNode } from "react";
+import { ActivityIndicator, Pressable, StyleSheet, Text, View, ViewStyle } from "react-native";
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import { ModuleId, WorkflowState, moduleById } from "@/lib/workspace-model";
+
+export const palette = { base: "#101620", surface: "#18212E", surfaceStrong: "#202C3A", border: "#2A3A4C", text: "#F4F7FA", muted: "#94A4B5", teal: "#2AD4C4", tealMuted: "#173F40", amber: "#F3B34C", rose: "#E36D77" };
+const stateTone: Record<WorkflowState, { fill: string; text: string }> = { Draft: { fill: "#2A3441", text: "#C2CFDB" }, Ready: { fill: "#173F40", text: "#69E6D9" }, Review: { fill: "#453920", text: "#F7CF7C" }, Complete: { fill: "#203B30", text: "#9BE0B4" }, Archived: { fill: "#303742", text: "#A5B0BD" } };
+
+export function LoadingView() { return <View style={styles.loadingWrap}><ActivityIndicator color={palette.teal} /><Text style={styles.loadingText}>Opening your local workspace…</Text></View>; }
+export function Card({ children, style }: { children: ReactNode; style?: ViewStyle }) { return <View style={[styles.card, style]}>{children}</View>; }
+export function SectionLabel({ children, action }: { children: string; action?: ReactNode }) { return <View style={styles.sectionRow}><Text style={styles.sectionLabel}>{children}</Text>{action}</View>; }
+export function PrimaryButton({ label, onPress, icon = "plus", disabled = false }: { label: string; onPress: () => void; icon?: Parameters<typeof IconSymbol>[0]["name"]; disabled?: boolean }) { return <Pressable accessibilityRole="button" accessibilityLabel={label} disabled={disabled} onPress={onPress} style={({ pressed }) => [styles.primaryButton, disabled && styles.buttonDisabled, pressed && styles.buttonPressed]}><IconSymbol name={icon} size={18} color={palette.base} /><Text style={styles.primaryButtonText}>{label}</Text></Pressable>; }
+export function QuietButton({ label, onPress, icon = "chevron.right" }: { label: string; onPress: () => void; icon?: Parameters<typeof IconSymbol>[0]["name"] }) { return <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} style={({ pressed }) => [styles.quietButton, pressed && styles.quietPressed]}><Text style={styles.quietButtonText}>{label}</Text><IconSymbol name={icon} size={16} color={palette.teal} /></Pressable>; }
+export function StatusPill({ state }: { state: WorkflowState }) { const tone = stateTone[state]; return <View style={[styles.pill, { backgroundColor: tone.fill }]}><Text style={[styles.pillText, { color: tone.text }]}>{state}</Text></View>; }
+export function ModulePill({ id }: { id: ModuleId }) { const module = moduleById(id); return <View style={[styles.modulePill, { borderColor: module.tint }]}><View style={[styles.moduleDot, { backgroundColor: module.tint }]} /><Text style={styles.moduleText}>{module.shortName}</Text></View>; }
+export function EmptyCard({ title, detail, action }: { title: string; detail: string; action?: ReactNode }) { return <Card style={styles.emptyCard}><View style={styles.emptyGlyph}><IconSymbol name="doc.text" size={22} color={palette.teal} /></View><Text style={styles.emptyTitle}>{title}</Text><Text style={styles.emptyDetail}>{detail}</Text>{action ? <View style={styles.emptyAction}>{action}</View> : null}</Card>; }
+
+const styles = StyleSheet.create({
+  loadingWrap: { flex: 1, alignItems: "center", justifyContent: "center", gap: 12, backgroundColor: palette.base }, loadingText: { color: palette.muted, fontSize: 14 },
+  card: { backgroundColor: palette.surface, borderColor: palette.border, borderWidth: 1, borderRadius: 20, padding: 18 }, sectionRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }, sectionLabel: { color: palette.muted, fontSize: 12, fontWeight: "700", letterSpacing: 1.1, textTransform: "uppercase" },
+  primaryButton: { minHeight: 52, paddingHorizontal: 18, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 9, borderRadius: 16, backgroundColor: palette.teal }, primaryButtonText: { color: palette.base, fontSize: 16, fontWeight: "800" }, buttonDisabled: { backgroundColor: "#61717F" }, buttonPressed: { transform: [{ scale: 0.98 }], opacity: 0.92 },
+  quietButton: { flexDirection: "row", alignItems: "center", gap: 4, paddingVertical: 4 }, quietButtonText: { color: palette.teal, fontSize: 14, fontWeight: "700" }, quietPressed: { opacity: 0.7 },
+  pill: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: 999 }, pillText: { fontSize: 12, fontWeight: "800" },
+  modulePill: { flexDirection: "row", alignItems: "center", gap: 6, borderWidth: 1, borderRadius: 999, paddingHorizontal: 9, paddingVertical: 6 }, moduleDot: { width: 7, height: 7, borderRadius: 4 }, moduleText: { color: palette.text, fontSize: 12, fontWeight: "700" },
+  emptyCard: { alignItems: "center", paddingVertical: 28 }, emptyGlyph: { width: 48, height: 48, borderRadius: 16, backgroundColor: palette.tealMuted, alignItems: "center", justifyContent: "center", marginBottom: 14 }, emptyTitle: { color: palette.text, fontSize: 18, fontWeight: "800", textAlign: "center" }, emptyDetail: { color: palette.muted, fontSize: 14, lineHeight: 20, marginTop: 7, textAlign: "center" }, emptyAction: { marginTop: 18, alignSelf: "stretch" },
+});

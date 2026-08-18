@@ -1,48 +1,27 @@
-import { ScrollView, Text, View, TouchableOpacity } from "react-native";
-
+import { router } from "expo-router";
+import { Alert, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import { Card, EmptyCard, LoadingView, ModulePill, PrimaryButton, QuietButton, SectionLabel, StatusPill, palette } from "@/components/workspace-ui";
 import { ScreenContainer } from "@/components/screen-container";
+import { formatDate } from "@/lib/workspace-model";
+import { useWorkspace } from "@/lib/workspace-context";
 
-/**
- * Home Screen - NativeWind Example
- *
- * This template uses NativeWind (Tailwind CSS for React Native).
- * You can use familiar Tailwind classes directly in className props.
- *
- * Key patterns:
- * - Use `className` instead of `style` for most styling
- * - Theme colors: use tokens directly (bg-background, text-foreground, bg-primary, etc.); no dark: prefix needed
- * - Responsive: standard Tailwind breakpoints work on web
- * - Custom colors defined in tailwind.config.js
- */
-export default function HomeScreen() {
-  return (
-    <ScreenContainer className="p-6">
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View className="flex-1 gap-8">
-          {/* Hero Section */}
-          <View className="items-center gap-2">
-            <Text className="text-4xl font-bold text-foreground">Welcome</Text>
-            <Text className="text-base text-muted text-center">
-              Edit app/(tabs)/index.tsx to get started
-            </Text>
-          </View>
-
-          {/* Example Card */}
-          <View className="w-full max-w-sm self-center bg-surface rounded-2xl p-6 shadow-sm border border-border">
-            <Text className="text-lg font-semibold text-foreground mb-2">NativeWind Ready</Text>
-            <Text className="text-sm text-muted leading-relaxed">
-              Use Tailwind CSS classes directly in your React Native components.
-            </Text>
-          </View>
-
-          {/* Example Button */}
-          <View className="items-center">
-            <TouchableOpacity className="bg-primary px-6 py-3 rounded-full active:opacity-80">
-              <Text className="text-background font-semibold">Get Started</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ScrollView>
-    </ScreenContainer>
-  );
+export default function CommandDeckScreen() {
+  const { ready, workspaces, jobs, findings, clearLocalData } = useWorkspace();
+  if (!ready) return <LoadingView />;
+  const recentJobs = jobs.slice(0, 3);
+  const activeWorkspaces = workspaces.filter((workspace) => workspace.status === "Active").length;
+  const clear = () => Alert.alert("Clear local data?", "This removes workspace, analysis, and finding records from this device only. It does not affect your external analysis stack.", [{ text: "Cancel", style: "cancel" }, { text: "Clear data", style: "destructive", onPress: () => void clearLocalData() }]);
+  return <ScreenContainer containerClassName="bg-[#101620]" safeAreaClassName="bg-[#101620]"><FlatList data={recentJobs} keyExtractor={(item) => item.id} contentContainerStyle={styles.content}
+    ListHeaderComponent={<><View style={styles.topRow}><View><Text style={styles.eyebrow}>AUTHORIZED RESEARCH</Text><Text style={styles.title}>Command Deck</Text></View><Pressable accessibilityRole="button" accessibilityLabel="Clear local workspace data" onPress={clear} style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}><IconSymbol name="gearshape" size={20} color={palette.muted} /></Pressable></View><Card style={styles.connectionCard}><View style={styles.connectionHeader}><View style={styles.connectionGlyph}><IconSymbol name="lock.shield" size={18} color={palette.teal} /></View><View style={styles.connectionText}><Text style={styles.connectionTitle}>Local-first workspace</Text><Text style={styles.connectionDetail}>Your records stay on this device. Connect a private gateway later when your operator provides one.</Text></View></View></Card><PrimaryButton label="Prepare analysis" onPress={() => router.push("/analysis/new")} icon="plus" /><View style={styles.metricRow}><Metric label="Active workspaces" value={String(activeWorkspaces)} /><Metric label="Prepared analyses" value={String(jobs.length)} /><Metric label="Saved findings" value={String(findings.length)} /></View><View style={styles.sectionSpacer}><SectionLabel action={<QuietButton label="View stack" onPress={() => router.push("/stack")} icon="server.rack" />}>Recent activity</SectionLabel></View></>}
+    renderItem={({ item }) => <Pressable accessibilityRole="button" accessibilityLabel={`Open analysis for ${item.reference}`} onPress={() => router.push({ pathname: "/analysis/[id]", params: { id: item.id } })} style={({ pressed }) => [styles.activityRow, pressed && styles.pressed]}><View style={styles.activityMain}><View style={styles.activityTitleRow}><Text style={styles.activityTitle} numberOfLines={1}>{item.reference}</Text><StatusPill state={item.state} /></View><View style={styles.moduleRow}>{item.modules.slice(0, 3).map((id) => <ModulePill key={id} id={id} />)}</View><Text style={styles.activityDate}>Prepared {formatDate(item.createdAt)}</Text></View><IconSymbol name="chevron.right" size={18} color={palette.muted} /></Pressable>}
+    ListEmptyComponent={<EmptyCard title="Your command deck is clear" detail="Create a workspace, then prepare an authorized analysis record. The app never invents remote results or credentials." action={<PrimaryButton label="Create a workspace" onPress={() => router.push("/workspaces")} icon="folder.badge.plus" />} />}
+    ListFooterComponent={jobs.length > 0 ? <Text style={styles.footerText}>Keep the mobile record concise, and run assessments only in your separate approved environment.</Text> : null}
+  /></ScreenContainer>;
 }
+function Metric({ label, value }: { label: string; value: string }) { return <View style={styles.metric}><Text style={styles.metricValue}>{value}</Text><Text style={styles.metricLabel}>{label}</Text></View>; }
+const styles = StyleSheet.create({
+  content: { paddingHorizontal: 20, paddingTop: 10, paddingBottom: 34, gap: 12, backgroundColor: palette.base, flexGrow: 1 }, topRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }, eyebrow: { color: palette.teal, fontSize: 11, fontWeight: "800", letterSpacing: 1.2 }, title: { color: palette.text, fontSize: 31, lineHeight: 38, fontWeight: "800", letterSpacing: -0.6, marginTop: 3 }, iconButton: { width: 42, height: 42, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: palette.border, borderRadius: 14, backgroundColor: palette.surface }, pressed: { opacity: 0.72 },
+  connectionCard: { marginBottom: 3, backgroundColor: "#142833", borderColor: "#214A53" }, connectionHeader: { flexDirection: "row", gap: 12 }, connectionGlyph: { width: 34, height: 34, borderRadius: 11, alignItems: "center", justifyContent: "center", backgroundColor: palette.tealMuted }, connectionText: { flex: 1 }, connectionTitle: { color: palette.text, fontSize: 15, fontWeight: "800" }, connectionDetail: { color: palette.muted, fontSize: 13, lineHeight: 18, marginTop: 3 }, metricRow: { flexDirection: "row", gap: 9, marginTop: 3 }, metric: { flex: 1, padding: 14, minHeight: 88, borderColor: palette.border, borderWidth: 1, backgroundColor: palette.surface, borderRadius: 17, justifyContent: "space-between" }, metricValue: { color: palette.text, fontSize: 24, lineHeight: 29, fontWeight: "800" }, metricLabel: { color: palette.muted, fontSize: 11, lineHeight: 14, fontWeight: "600" }, sectionSpacer: { marginTop: 15 },
+  activityRow: { flexDirection: "row", alignItems: "center", gap: 12, padding: 16, backgroundColor: palette.surface, borderColor: palette.border, borderWidth: 1, borderRadius: 18 }, activityMain: { flex: 1, gap: 8 }, activityTitleRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 }, activityTitle: { color: palette.text, fontSize: 15, fontWeight: "800", flex: 1 }, moduleRow: { flexDirection: "row", flexWrap: "wrap", gap: 6 }, activityDate: { color: palette.muted, fontSize: 12 }, footerText: { color: palette.muted, fontSize: 13, lineHeight: 19, textAlign: "center", paddingHorizontal: 15, paddingTop: 9 },
+});
