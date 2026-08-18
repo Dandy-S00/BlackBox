@@ -1,0 +1,19 @@
+services:
+  operator-gateway:
+    build:
+      context: ./operator-gateway
+    restart: unless-stopped
+    depends_on:
+      ghidra-mcp:
+        condition: service_started
+      mobsf:
+        condition: service_started
+    networks:
+      - mcp-network
+    environment:
+      PORT: 3009
+      GATEWAY_OPERATOR_TOKEN: ${GATEWAY_OPERATOR_TOKEN:?set_a_long_random_token}
+      OPERATOR_EXECUTOR_URL: ${OPERATOR_EXECUTOR_URL:?set_an_internal_approved_job_executor_url}
+      OPERATOR_EXECUTOR_SECRET: ${OPERATOR_EXECUTOR_SECRET:?set_an_executor_hmac_secret}
+    ports:
+      - "127.0.0.1:3009:3009"

@@ -9,7 +9,7 @@ interface WorkspaceContextValue extends WorkspaceData {
   createWorkspace: (name: string, targetType: TargetType) => Workspace | null;
   archiveWorkspace: (workspaceId: string) => void;
   createJob: (input: { workspaceId: string; reference: string; targetType: TargetType; modules: ModuleId[]; acknowledgedAt: string }) => AnalysisJob;
-  updateJob: (jobId: string, changes: Partial<Pick<AnalysisJob, "state" | "summary">>) => void;
+  updateJob: (jobId: string, changes: Partial<Pick<AnalysisJob, "state" | "summary" | "dispatchedAt" | "gatewayReceiptId" | "gatewayStatus">>) => void;
   createFinding: (input: { jobId: string; source: ModuleId; severity: FindingSeverity; title: string; detail: string }) => Finding | null;
   setJobState: (jobId: string, state: WorkflowState) => void;
   clearLocalData: () => Promise<void>;
@@ -61,7 +61,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     return job;
   }, [commit]);
 
-  const updateJob = useCallback((jobId: string, changes: Partial<Pick<AnalysisJob, "state" | "summary">>) => commit((current) => ({ ...current, jobs: current.jobs.map((job) => job.id === jobId ? { ...job, ...changes } : job) })), [commit]);
+  const updateJob = useCallback((jobId: string, changes: Partial<Pick<AnalysisJob, "state" | "summary" | "dispatchedAt" | "gatewayReceiptId" | "gatewayStatus">>) => commit((current) => ({ ...current, jobs: current.jobs.map((job) => job.id === jobId ? { ...job, ...changes } : job) })), [commit]);
   const setJobState = useCallback((jobId: string, state: WorkflowState) => updateJob(jobId, { state }), [updateJob]);
   const createFinding = useCallback((input: { jobId: string; source: ModuleId; severity: FindingSeverity; title: string; detail: string }) => {
     if (!input.title.trim()) return null;

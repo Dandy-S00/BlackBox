@@ -13,5 +13,6 @@ export default function TabLayout() {
     <Tabs.Screen name="workspaces" options={{ title: "Workspaces", tabBarIcon: ({ color }) => <IconSymbol size={23} name="folder.fill" color={color} /> }} />
     <Tabs.Screen name="insights" options={{ title: "Insights", tabBarIcon: ({ color }) => <IconSymbol size={23} name="lightbulb.max.fill" color={color} /> }} />
     <Tabs.Screen name="stack" options={{ title: "Stack", tabBarIcon: ({ color }) => <IconSymbol size={23} name="server.rack" color={color} /> }} />
+    <Tabs.Screen name="gateway" options={{ title: "Gateway", tabBarIcon: ({ color }) => <IconSymbol size={23} name="lock.shield" color={color} /> }} />
   </Tabs>;
 }

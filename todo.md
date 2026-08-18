@@ -12,3 +12,11 @@
 - [x] Generate and apply original launcher branding assets and update mobile configuration.
 - [x] Add automated tests for local persistence and analysis job validation.
 - [x] Validate type checking and the principal mobile screen layouts.
+- [x] Define an operator-controlled gateway contract that limits supported status and job actions.
+- [x] Use the existing secure session storage and server-side gateway secrets, keeping operator credentials out of application state.
+- [x] Add authenticated stack-health monitoring with redacted error handling.
+- [x] Add an explicit two-step approval flow before dispatching a job to the gateway.
+- [x] Add gateway status, dispatch history, and connection controls to the mobile interface.
+- [x] Add automated tests for gateway request validation and authorization safeguards.
+- [x] Validate gateway behavior, TypeScript, and affected mobile screens.
+- [x] Add a deployable private-host gateway package with allowlisted health probes and approved-job handoff.

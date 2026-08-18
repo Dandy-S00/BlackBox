@@ -32,6 +32,9 @@ export interface AnalysisJob {
   authorizedAt: string;
   createdAt: string;
   summary: string;
+  dispatchedAt?: string;
+  gatewayReceiptId?: string;
+  gatewayStatus?: string;
 }
 
 export interface Finding {

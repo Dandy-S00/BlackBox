@@ -1,0 +1,17 @@
+{
+  "name": "analysis-workspace-operator-gateway",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node --import=tsx src/index.ts"
+  },
+  "dependencies": {
+    "express": "^4.22.1",
+    "tsx": "^4.21.0",
+    "zod": "^4.2.1"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3"
+  }
+}
