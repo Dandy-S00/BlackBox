@@ -44,7 +44,7 @@ Summarize only actual locally recorded dispatches. Show local dispatch totals, i
 
 Read `references/gateway-and-deployment.md` and produce the release intake from `templates/production-release.md`. Keep the managed mobile API separate from the Docker-capable private host. Place the gateway behind TLS, expose only the reverse proxy, and keep analyzers, databases, MCP services, and the executor on internal networks.
 
-Require a named approver, target scope, version, secret source, backup state, expected health, and rollback point before a release or real dispatch. Stop rollout on failed verification.
+Require a named approver, target scope, version, secret source, backup state, expected health, and rollback point before a release or real dispatch. Use `templates/ci-release-checklist.md` to record CI evidence and the release approval. Stop rollout on failed verification or missing evidence.
 
 ### 6. Validate and Package
 
@@ -66,4 +66,4 @@ Create a checkpoint and attach it to the user. Attach this skill's `SKILL.md` in
 
 ## Resources
 
-Read `references/gateway-and-deployment.md` for the secure topology and release controls. Copy `templates/mobile-design.md`, `templates/todo.md`, and `templates/production-release.md` into the working project only when creating the respective artifacts.
+Read `references/gateway-and-deployment.md` for the secure topology and release controls. Copy `templates/mobile-design.md`, `templates/todo.md`, `templates/production-release.md`, and `templates/ci-release-checklist.md` into the working project only when creating the respective artifacts.

@@ -34,3 +34,5 @@
 - [x] Expand the reusable operations skill to cover app initialization, implementation, validation, checkpointing, and publishing handoff.
 - [x] Bundle the validated skill source and a downloadable skill archive with the application code.
 - [x] Validate the enhanced skill package and its versioned project copy.
+- [x] Add a CI release checklist template with explicit approval evidence to the reusable build-to-publish skill.
+- [x] Refresh and validate the project-bundled skill source and installable archive.
