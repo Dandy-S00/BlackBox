@@ -31,3 +31,6 @@
 - [x] Create a reusable secure-deployment agent skill using the prescribed skill-creation workflow.
 - [x] Create a repeatable deployment workflow and an operator agent specification.
 - [x] Validate the packaged deployment artifacts and production guidance.
+- [x] Expand the reusable operations skill to cover app initialization, implementation, validation, checkpointing, and publishing handoff.
+- [x] Bundle the validated skill source and a downloadable skill archive with the application code.
+- [x] Validate the enhanced skill package and its versioned project copy.
