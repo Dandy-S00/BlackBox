@@ -1,0 +1,17 @@
+{
+  email {$ACME_EMAIL}
+}
+
+{$GATEWAY_PUBLIC_DOMAIN} {
+  encode zstd gzip
+  request_body {
+    max_size 32KB
+  }
+  header {
+    -Server
+    Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    X-Content-Type-Options "nosniff"
+    Referrer-Policy "no-referrer"
+  }
+  reverse_proxy operator-gateway:3009
+}

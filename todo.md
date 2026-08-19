@@ -26,3 +26,8 @@
 - [x] Add periodic authorized stack-health refresh, manual refresh, and degraded-state feedback.
 - [x] Add tests for dispatch dashboard aggregation and stack-health response validation.
 - [x] Validate dashboard behavior, type checking, and mobile layout.
+- [x] Define a production deployment topology for the mobile backend, gateway, executor, and private analysis stack.
+- [x] Document the security controls, secrets lifecycle, observability, backup, and release process.
+- [x] Create a reusable secure-deployment agent skill using the prescribed skill-creation workflow.
+- [x] Create a repeatable deployment workflow and an operator agent specification.
+- [x] Validate the packaged deployment artifacts and production guidance.

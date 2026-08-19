@@ -1,0 +1,43 @@
+services:
+  operator-gateway:
+    build:
+      context: ./operator-gateway
+    restart: unless-stopped
+    expose:
+      - "3009"
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      PORT: 3009
+      GATEWAY_OPERATOR_TOKEN: ${GATEWAY_OPERATOR_TOKEN:?set_in_protected_environment}
+      OPERATOR_EXECUTOR_URL: ${OPERATOR_EXECUTOR_URL:?set_to_internal_executor}
+      OPERATOR_EXECUTOR_SECRET: ${OPERATOR_EXECUTOR_SECRET:?set_in_protected_environment}
+    networks:
+      - mcp-network
+
+  caddy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    depends_on:
+      - operator-gateway
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      GATEWAY_PUBLIC_DOMAIN: ${GATEWAY_PUBLIC_DOMAIN:?set_to_public_dns_name}
+      ACME_EMAIL: ${ACME_EMAIL:?set_to_operations_email}
+    volumes:
+      - ./operator-gateway/deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - mcp-network
+
+volumes:
+  caddy_data:
+  caddy_config:
